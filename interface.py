@@ -193,7 +193,10 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
   the chosen line. If "get_input" is True, adds a blank line where the
   user can write a new choice, and returns a tuple with the index of the
   chosen line and any input written in the new line. The user can confirm
-  his choice by pressing Enter.
+  his choice by pressing Enter. If "time" is greater than -1, if the user
+  doesn't provide any input in "time" tenth of seconds, an exception is
+  raised. If a user does provide some input, but is too slow in doing it,
+  an exception could still be raised; this behaviour should be fixed.
 
   Args:
     title: The title of the screen.
@@ -201,8 +204,8 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
     get_input: Optional. If set to true, adds a new blank line to the bottom
                of the screen to be used to write a new choice and alters the
                return value.
-    time: Optional. If time >= 0, wait up to time tenth of a second for an
-          answer. If no answer is given, raises
+    time: Optional. If time >= 0, wait up to time tenths of a second for an
+          answer. If no answer is given, raises TimeError
     i: Optional. Currently selected line.
 
   Raises:
