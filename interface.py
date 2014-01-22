@@ -6,6 +6,10 @@ import curses
 margin_up = 0
 margin_left = 1
 
+class TimeError(Exception):
+  """Exception to be used to mean an operation took too much time"""
+  pass
+
 class Window:
   """Abstraction of a window.
 
@@ -149,6 +153,11 @@ def close():
   curses.echo()
   curses.endwin()
 
+def clear_screen():
+  """Clears the screen"""
+  stdscr.clear()
+  stdscr.refresh()
+
 def choice_screen(title, *choices, high=-1, start_row = 0, start_col = 0):
   """Creates a new window to choose from a number of alternatives.
 
@@ -177,7 +186,7 @@ def choice_screen(title, *choices, high=-1, start_row = 0, start_col = 0):
   screen.refresh()
   return screen
 
-def get_choice(title, *choices, get_input = False, i = 0):
+def get_choice(title, *choices, get_input = False, time = -1, i = 0):
   """Makes the user choose between a number of choices.
 
   Calls choice_screen() with the given choices, and returns the index of
@@ -192,7 +201,12 @@ def get_choice(title, *choices, get_input = False, i = 0):
     get_input: Optional. If set to true, adds a new blank line to the bottom
                of the screen to be used to write a new choice and alters the
                return value.
+    time: Optional. If time >= 0, wait up to time tenth of a second for an
+          answer. If no answer is given, raises
     i: Optional. Currently selected line.
+
+  Raises:
+    TimeError: No input was given in time 
 
   Returns:
     If "get_input" is False, the index of the selected line.
@@ -206,10 +220,26 @@ def get_choice(title, *choices, get_input = False, i = 0):
   else:
     max_i = n_lines-1
   min_i = 0
+  delay = lambda x: 255 if x > 255 else x % 256
+  if time >= 0:
+    curses.halfdelay(delay(time))
   while True:
     screen = choice_screen(title, *(choices + (new_input,)), high=i)
-    c = get_char()
-    if c == "KEY_DOWN":
+    try:
+      c = get_char()
+    except curses.error:
+      if time < 255:
+        curses.cbreak()
+        clear_screen()
+        raise TimeError
+      else:
+        time -= 255
+        curses.halfdelay(delay(time))
+        c = None
+
+    if c == None:
+      pass
+    elif c == "KEY_DOWN":
       i = min(i+1,max_i)
     elif c == "KEY_UP":
       i = max(i-1,min_i)
@@ -220,6 +250,9 @@ def get_choice(title, *choices, get_input = False, i = 0):
         new_input += c
       elif c == "KEY_BACKSPACE":
         new_input = new_input[:-1]
+
+  curses.cbreak()
+  clear_screen()
     
   if get_input:
     return (i, new_input)
@@ -245,7 +278,12 @@ if __name__ == "__main__":
   title = "Prova"
   f = lambda s,x,y: [s + str(i) for i in range(x,y+1)]
   choices = f("Linea ", 0, 10)
-  i, junk = get_choice(title, *choices, get_input = True) 
+  try:
+    i, junk = get_choice(title, *choices, get_input = True, time = 20) 
+  except TimeError:
+    choices = f("Ok ", 0,5)
+    i, junk = get_choice(title, *choices, get_input = True)
+  
 
   close()
 
