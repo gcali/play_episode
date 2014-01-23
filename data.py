@@ -35,7 +35,8 @@ def get_data():
     try:
       with open(os.path.join(loc,file_name), "rU") as f:
         for line in f:
-          data.append([x for x in _parse_line(line)])
+          data.append(_parse_line(line))
+          #data.append(tuple([x for x in _parse_line(line)]))
         path = os.path.join(loc,file_name)       
         break
     except IOError:
@@ -50,7 +51,11 @@ def get_data():
   return data
 
 def _parse_line(line):
-  return re.search(r"(.*?)\|(\d*?)\|(\d*?)\|(.*)\|", line).groups()
+  #return re.search(r"(.*?)\|(\d*?)\|(\d*?)\|(.*)\|", line).groups()
+  (name,season,episode,path) = \
+    re.search(r"(.*?)\|(\d*?)\|(\d*?)\|(.*)\|", line).groups()
+  return {"name":name, "season":season, "episode":episode, "path":path}
+
 
 def save_data(data):
   """Saves the current series data
@@ -59,16 +64,16 @@ def save_data(data):
   file specified in "path".
 
   Args:
-    data: A list of lists of 4 elements of the format
-          [name,season,episode,path]
+    data: A list of dictionaries of 4 elements of the format
+          {"name":,"season":,"episode":,"path":}
 
   Raises:
     IOError: The file where to save the data in couldn't be opened
   """ 
   with open(path, "w") as f:
-    for line in data:
-      for elem in line: 
-        f.write("{}|".format(elem))
+    for elem in data:
+      for key in ("name","season","episode","path"): 
+        f.write("{}|".format(elem[key]))
       f.write("\n")
 
 def assure_dir(directory):
