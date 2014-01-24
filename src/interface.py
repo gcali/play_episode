@@ -10,6 +10,11 @@ class TimeError(Exception):
   """Exception to be used to mean an operation took too much time"""
   pass
 
+class InputError(Exception):
+  """Exception to be used if a not meaningful key is pressed
+     in get_choice"""
+  pass
+
 class Window:
   """Abstraction of a window.
 
@@ -246,13 +251,15 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
       i = min(i+1,max_i)
     elif c == "KEY_UP":
       i = max(i-1,min_i)
-    elif c == "\n" or c == "KEY_ENTER" or c == "q":
+    elif c == "\n" or c == "KEY_ENTER":
       break
     elif get_input and i == max_i:
       if c.isalpha():
         new_input += c
       elif c == "KEY_BACKSPACE":
         new_input = new_input[:-1]
+    else:
+      raise InputError(c)
 
   curses.cbreak()
   clear_screen()

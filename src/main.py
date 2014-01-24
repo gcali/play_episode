@@ -12,13 +12,19 @@ def choose_episode(entries):
   return entries[interface.get_choice(title, *choices)]
 
 if __name__ == "__main__":
+  key = ""
   try:
     entries = data.get_data()
     interface.start()
     i = 1
     while i > 0:
-      video_path = find.find_file(choose_episode(entries))
-      play.play_video(video_path, "mplayer", "-zoom")
+      try:
+        video_path = find.find_file(choose_episode(entries))
+      except interface.InputError as e:
+        key = e.args[0]
+      else:
+        play.play_video(video_path, "mplayer", "-zoom")
       i -= 1
   finally:
     interface.close()
+    print(key)

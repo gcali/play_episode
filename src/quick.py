@@ -4,5 +4,4 @@ import os
 
 print(os.path.join(os.path.expanduser("~") + "/", "temp_file"))
 
-name = (test1,test2)
-print([*name])
+print(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
