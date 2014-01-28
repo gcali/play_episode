@@ -1,0 +1,11 @@
+#! /usr/bin/env python3
+
+import subprocess
+import os
+
+if __name__ == "__main__":
+  path = os.path.dirname(os.path.realpath(__file__))
+  print(path)
+  print(os.path.realpath(__file__))
+  os.chdir(path)
+  subprocess.call(["src/main.py"]) 
