@@ -10,6 +10,9 @@ path = os.path.join(base_dir,file_name)
 
 #print(os.path.join(base_dir,file_name))
 
+class RangeError(Exception):
+  pass
+
 def get_data():
   """Get the data about series already saved in the config file.
 
@@ -51,7 +54,6 @@ def get_data():
   return data
 
 def _parse_line(line):
-  #return re.search(r"(.*?)\|(\d*?)\|(\d*?)\|(.*)\|", line).groups()
   (name,season,episode,path) = \
     re.search(r"(.*?)\|(\d*?)\|(\d*?)\|(.*)\|", line).groups()
   return {"name":name, "season":season, "episode":episode, "path":path}
@@ -76,6 +78,26 @@ def save_data(data):
         f.write("{}|".format(elem[key]))
       f.write("\n")
 
+def change_episode(data, index, shift):
+  """Changes the value of the episode of an entry
+  
+  Changes the value of the episode of the entry number "index"
+  to its old value plus "shift"; its value will always be between
+  0 and 99.
+
+  Args:
+    data: The data to change.
+    index: The index of the entry to change
+    shift: The value to add to the episode
+
+  Raises:
+    RangeError: No entry with the given index was found"""
+
+  val = int(data[index]["episode"])
+  val = max(min(val+shift, 99),0)
+  data[index]["episode"] = "{0:02d}".format(val)
+
+
 def assure_dir(directory):
   """Assures of the existance of "directory"
   Creates a new directory in "directory" if it isn't already
@@ -98,6 +120,9 @@ def assure_dir(directory):
 
 if __name__ == "__main__":
   data = get_data() 
+  for list in data:
+    print(list)
+  change_episode(data, 0, 1)
   for list in data:
     print(list)
   #save_data(data)

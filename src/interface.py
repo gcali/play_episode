@@ -12,8 +12,18 @@ class TimeError(Exception):
 
 class InputError(Exception):
   """Exception to be used if a not meaningful key is pressed
-     in get_choice"""
-  pass
+     in get_choice.
+     
+  Attributes:
+    self.key: The pressed key
+    self.index: Optional. The index of the entry that was being
+                selected when the key was pressed"""
+  def __init__(self, key, index=-1):
+    self.key = key
+    self.index = index
+
+  def __str__(self):
+    return repr(self.key)
 
 class Window:
   """Abstraction of a window.
@@ -215,6 +225,9 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
 
   Raises:
     TimeError: No input was given in time 
+    InputError: The given input isn't recognized by the function.
+                The "index" attribute is set to the current selected
+                line, which is -1 if it's the input one
 
   Returns:
     If "get_input" is False, the index of the selected line.
@@ -258,8 +271,10 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
         new_input += c
       elif c == "KEY_BACKSPACE":
         new_input = new_input[:-1]
+      else:
+        raise InputError(c)
     else:
-      raise InputError(c)
+      raise InputError(c, i)
 
   curses.cbreak()
   clear_screen()
