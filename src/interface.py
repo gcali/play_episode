@@ -111,7 +111,6 @@ class Window:
 
   def create_under(self, dim_row, dim_col = -1,
                          diff_row = 0, start_col = 0):
-    start_row = self.dim_row + self.start_row + diff_row
     """Creates a new window under the current one.
 
     Creates a new window of "dim_row" lines under the current one, with optional
@@ -128,6 +127,7 @@ class Window:
     Returns:
       The new window.
     """
+    start_row = self.dim_row + self.start_row + diff_row
     return Window(dim_row, dim_col, start_row, start_col)
 
     
