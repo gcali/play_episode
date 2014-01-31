@@ -173,6 +173,29 @@ def clear_screen():
   stdscr.clear()
   stdscr.refresh()
 
+def text_screen(text, wait_for_key = True):
+  """Creates a new windows displaying text
+
+  Creates a new window object with the text give in "text".
+  If "wait_for_key", wait for a key to be pressed before returning,
+  otherwise give immediately back control
+  
+
+  Args:
+    text: The text to be printed.
+    wait_for_key: Optional. If True, waits for a key to be pressed
+                  and return it
+
+  Returns:
+    If "wait_for_key", the pressed key
+  """
+  #TODO Right now it assumes that text fits in one line
+  win = Window(1)
+  win.print_str(text)
+  win.refresh()
+  if wait_for_key:
+    return get_char()
+
 def choice_screen(title, *choices, high=-1, start_row = 0, start_col = 0):
   """Creates a new window to choose from a number of alternatives.
 
@@ -225,14 +248,13 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
 
   Raises:
     TimeError: No input was given in time 
-    InputError: The given input isn't recognized by the function.
-                The "index" attribute is set to the current selected
-                line, which is -1 if it's the input one
 
   Returns:
-    If "get_input" is False, the index of the selected line.
-    If "get_input" is True, a tuple with the index of the selected line and
-    a string containing any input written in the new line.
+    If "get_input" is False, a tuple with the index of the selected
+    line and the last pressed key.
+    If "get_input" is True, a tuple with the index of the selected line,
+      the last pressed key and a string containing any input written in the
+      new line.
   """
   new_input = ""
   n_lines = len(choices)
@@ -264,7 +286,8 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
       i = min(i+1,max_i)
     elif c == "KEY_UP":
       i = max(i-1,min_i)
-    elif c == "\n" or c == "KEY_ENTER":
+    elif c == "KEY_ENTER":
+      c = "\n"
       break
     elif get_input and i == max_i:
       if c.isalpha():
@@ -272,17 +295,17 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
       elif c == "KEY_BACKSPACE":
         new_input = new_input[:-1]
       else:
-        raise InputError(c)
+        break
     else:
-      raise InputError(c, i)
+      break
 
   curses.cbreak()
   clear_screen()
     
   if get_input:
-    return (i, new_input)
+    return (i, c, new_input)
   else:
-    return i
+    return (i, c)
 
 
 if __name__ == "__main__":

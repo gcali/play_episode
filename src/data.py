@@ -59,7 +59,7 @@ def _parse_line(line):
   return {"name":name, "season":season, "episode":episode, "path":path}
 
 
-def save_data(data):
+def save_data(data, spec_path = None):
   """Saves the current series data
 
   This function saves the data from the variable "data" to the
@@ -68,11 +68,16 @@ def save_data(data):
   Args:
     data: A list of dictionaries of 4 elements of the format
           {"name":,"season":,"episode":,"path":}
+    spec_path: Optional. If specified, the path where to save the data
 
   Raises:
     IOError: The file where to save the data in couldn't be opened
   """ 
-  with open(path, "w") as f:
+  if spec_path:
+    loc_path = spec_path
+  else:
+    loc_path = path
+  with open(loc_path, "w") as f:
     for elem in data:
       for key in ("name","season","episode","path"): 
         f.write("{}|".format(elem[key]))

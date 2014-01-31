@@ -19,45 +19,44 @@ def choose_episode(entries):
   title = "Choose an episode"
   index = 0
   while True:
-    try:
-      index = interface.get_choice(title, *choices, i=index)
+    (index,key) = interface.get_choice(title, *choices, i=index)
+    if key == "\n" or key == "KEY_ENTER":
       break
-    except interface.InputError as e:
-      index = e.index
-      if e.key == "KEY_LEFT" and e.index != -1:
-        data.change_episode(entries, e.index, -1)
-        choices[index] = name_from_entry(entries[index])
-      elif e.key == "KEY_RIGHT" and e.index != -1:
-        data.change_episode(entries, e.index, +1)
-        choices[index] = name_from_entry(entries[index])
-      elif e.key == "q" or e.key == "KEY_F(3)":
-        raise ChooseAction("quit")
-      elif e.key == "KEY_F(2)":
-        raise ChooseAction("save") 
+    elif key == "KEY_LEFT" and index != -1:
+      data.change_episode(entries, index, -1)
+      choices[index] = name_from_entry(entries[index])
+    elif key == "KEY_RIGHT" and index != -1:
+      data.change_episode(entries, index, +1)
+      choices[index] = name_from_entry(entries[index])
+    elif key == "q" or key == "KEY_F(3)":
+      raise ChooseAction("quit")
+    elif key == "KEY_F(2)":
+      raise ChooseAction("save") 
 
-  return entries[index]
+  return index
 
 if __name__ == "__main__":
   key = ""
   try:
     entries = data.get_data()
     interface.start()
-    i = 1
-    while i > 0:
+    while True:
       try:
-        episode=choose_episode(entries)
+        entry_index=choose_episode(entries)
+        episode = entries[entry_index]
       except ChooseAction as e:
         if e.action == "save":
+          data.save_data(entries)
           break
         elif e.action == "quit":
           break
       try:
         video_path = find.find_file(episode)
       except find.NotFoundError:
-        #TODO Implement file not found screen 
-        pass
+        interface.text_screen("File not found", True)
       else:
+        interface.text_screen("Enjoy the video!", False)
         play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa")
-      i -= 1
+        data.change_episode(entries,entry_index,1)
   finally:
     interface.close()
