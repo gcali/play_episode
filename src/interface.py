@@ -224,7 +224,8 @@ def choice_screen(title, *choices, high=-1, start_row = 0, start_col = 0):
   screen.refresh()
   return screen
 
-def get_choice(title, *choices, get_input = False, time = -1, i = 0):
+def get_choice(title, choices, get_input = False, time = -1, i = 0,\
+               handlers = {}):
   """Makes the user choose between a number of choices.
 
   Calls choice_screen() with the given choices, and returns the index of
@@ -238,13 +239,18 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
 
   Args:
     title: The title of the screen.
-    *choices: The lines to be printed as choices beneath the title.
+    choices: The list of lines to be printed as choices beneath the title.
     get_input: Optional. If set to true, adds a new blank line to the bottom
                of the screen to be used to write a new choice and alters the
                return value.
     time: Optional. If time >= 0, wait up to time tenths of a second for an
           answer. If no answer is given, raises TimeError
     i: Optional. Currently selected line.
+    handlers: Optional. If a key is pressed corresponding to an entry in
+              "handlers", call the function associated with the key,
+              passing the list of choices as the first argument
+              and the current index as the second. "handlers" should be
+              (or act like) a dictionary. 
 
   Raises:
     TimeError: No input was given in time 
@@ -267,7 +273,7 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
   if time >= 0:
     curses.halfdelay(delay(time))
   while True:
-    screen = choice_screen(title, *(choices + (new_input,)), high=i)
+    screen = choice_screen(title, *(choices + [new_input]), high=i)
     try:
       c = get_char()
     except curses.error:
@@ -286,9 +292,6 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
       i = min(i+1,max_i)
     elif c == "KEY_UP":
       i = max(i-1,min_i)
-    elif c == "KEY_ENTER":
-      c = "\n"
-      break
     elif get_input and i == max_i:
       if c.isalpha():
         new_input += c
@@ -297,7 +300,12 @@ def get_choice(title, *choices, get_input = False, time = -1, i = 0):
       else:
         break
     else:
-      break
+      for key in handlers.keys():
+        if c == key:
+          handlers[key](choices, i)
+          break
+      else:
+        break
 
   curses.cbreak()
   clear_screen()
