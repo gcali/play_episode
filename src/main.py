@@ -35,6 +35,22 @@ def choose_episode(entries):
 
   return index
 
+def yes_or_no():
+  choices = ["Yes", "No"]
+  title = "Do you want to watch another episode?"
+  index = 0
+  while True:
+    (index,key) = interface.get_choice(title, *choices, i=index)
+    if key == "y" or key == "Y":
+      return True
+    elif key == "n" or key == "N":
+      return False
+    elif key == "KEY_ENTER" or key == "\n":
+      if index == 0:
+        return True
+      else:
+        return False
+
 if __name__ == "__main__":
   key = ""
   try:
@@ -43,20 +59,26 @@ if __name__ == "__main__":
     while True:
       try:
         entry_index=choose_episode(entries)
-        episode = entries[entry_index]
       except ChooseAction as e:
         if e.action == "save":
           data.save_data(entries)
           break
         elif e.action == "quit":
           break
-      try:
-        video_path = find.find_file(episode)
-      except find.NotFoundError:
-        interface.text_screen("File not found", True)
-      else:
-        interface.text_screen("Enjoy the video!", False)
-        play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa")
-        data.change_episode(entries,entry_index,1)
+
+      while True:
+        try:
+          episode = entries[entry_index]
+          video_path = find.find_file(episode)
+        except find.NotFoundError:
+          interface.text_screen("File not found", True)
+          break
+        else:
+            interface.text_screen("Enjoy the video!", False)
+            play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa")
+            data.change_episode(entries,entry_index,1)
+            answ = yes_or_no()
+            if not answ:
+              break
   finally:
     interface.close()
