@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-import interface, data, find, play
+from data import Data
+import interface, find, play
 
 class ChooseAction(Exception):
   def __init__(self, action, episode_name=None):
@@ -16,7 +17,7 @@ def name_from_entry(entry):
 
 def handle_arrow_keys(entries, index, change, choices):
   if 0 <= index < len(entries):
-    data.change_episode(entries, index, change)
+    entries.change_episode(index, change)
     choices[index] = name_from_entry(entries[index])
 
 def choose_episode(entries):
@@ -31,10 +32,10 @@ def choose_episode(entries):
     if key == "\n" or key == "KEY_ENTER":
       break
     elif key == "KEY_LEFT" and index != -1:
-      data.change_episode(entries, index, -1)
+      entries.change_episode(index, -1)
       choices[index] = name_from_entry(entries[index])
     elif key == "KEY_RIGHT" and index != -1:
-      data.change_episode(entries, index, +1)
+      entries.change_episode(index, +1)
       choices[index] = name_from_entry(entries[index])
     elif key == "q" or key == "KEY_F(3)":
       raise ChooseAction("quit")
@@ -62,14 +63,15 @@ def yes_or_no():
 if __name__ == "__main__":
   key = ""
   try:
-    entries = data.get_data()
+    entries = Data()
+    entries.get_data()
     interface.start()
     while True:
       try:
         entry_index=choose_episode(entries)
       except ChooseAction as e:
         if e.action == "save":
-          data.save_data(entries)
+          entries.save_data()
           break
         elif e.action == "quit":
           break
@@ -84,7 +86,7 @@ if __name__ == "__main__":
         else:
             interface.text_screen("Enjoy the video!", False)
             play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa")
-            data.change_episode(entries,entry_index,1)
+            entries.change_episode(entry_index,1)
             answ = yes_or_no()
             if not answ:
               break
