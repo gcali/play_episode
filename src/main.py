@@ -28,7 +28,8 @@ def choose_episode(entries):
   handle_right = lambda x,y: handle_arrow_keys(entries, y, +1, x)
   handlers = {"KEY_LEFT" : handle_left, "KEY_RIGHT" : handle_right}
   while True:
-    (index,key) = interface.get_choice(title, choices, i=index, handlers=handlers)
+    (index,key) = interface.get_choice(title, choices,
+                                       i=index, handlers=handlers)
     if key == "\n" or key == "KEY_ENTER":
       break
     elif key == "KEY_LEFT" and index != -1:
