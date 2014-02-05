@@ -14,7 +14,9 @@ class NotFoundError(Exception):
 
 def gen_expr(season,episode,extension):
   """Generates the regular expression for the file"""
-  return r".*0*{0}[xXeE]0*{1}.*\.{2}$".format(int(season), int(episode), extension)
+  return r".*0*{0}[xXeE]0*{1}.*\.{2}$".format(int(season),
+                                              int(episode),
+                                              extension)
 
 def find_file(entry, find_subs = False):
   """Finds a path for a file based on entry
