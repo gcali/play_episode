@@ -2,6 +2,7 @@
 
 from data import Data
 import interface, find, play
+import sys
 
 class ChooseAction(Exception):
   def __init__(self, action, episode_name=None):
@@ -45,12 +46,13 @@ def choose_episode(entries):
 
   return index
 
-def yes_or_no():
+def yes_or_no(wait_time):
   choices = ["Yes", "No"]
   title = "Do you want to watch another episode?"
   index = 0
   while True:
-    (index,key) = interface.get_choice(title, choices, i=index)
+    (index,key) = interface.get_choice(title, choices,\
+                                       i=index, time=wait_time)
     if key == "y" or key == "Y":
       return True
     elif key == "n" or key == "N":
@@ -88,7 +90,10 @@ if __name__ == "__main__":
             interface.text_screen("Enjoy the video!", False)
             play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa")
             entries.change_episode(entry_index,1)
-            answ = yes_or_no()
+            try:
+              answ = yes_or_no(600) #wait up to 60 seconds for an answer
+            except interface.TimeError:
+              sys.exit(2)
             if not answ:
               break
   finally:
