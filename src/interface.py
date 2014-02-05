@@ -322,31 +322,34 @@ def get_choice(title, choices, get_input = False, time = -1, i = 0,\
 
 if __name__ == "__main__":
   start() 
-
-
-  win = Window(10,10)
-  win = win.create_under(2)
-
-  win.print_str("prova")
-  win.refresh()
-  char = get_char()
-
-  win.clear()
-  win.refresh()
-
-
-  title = "Prova"
-  f = lambda s,x,y: [s + str(i) for i in range(x,y+1)]
-  choices = f("Linea ", 0, 10)
   try:
-    i, junk = get_choice(title, *choices, get_input = True, time = 20) 
-  except TimeError:
-    choices = f("Ok ", 0,5)
-    i, junk = get_choice(title, *choices, get_input = True)
-  
 
-  close()
 
-  print(win.dim_row, win.dim_col, win.start_row, win.start_col)
-  print(char)
-  print(i, junk)
+    win = Window(10,10)
+    win = win.create_under(2)
+
+    win.print_str("prova")
+    win.refresh()
+    char = get_char()
+
+    win.clear()
+    win.refresh()
+
+
+    title = "Prova"
+    f = lambda s,x,y: [s + str(i) for i in range(x,y+1)]
+    choices = f("Linea ", 0, 10)
+    try:
+      i, key, junk = get_choice(title, choices, get_input = True, time = 20) 
+    except TimeError:
+      choices = f("Ok ", 0,5)
+      i, key, junk = get_choice(title, choices, get_input = True)
+    
+
+    close()
+
+    print(win.dim_row, win.dim_col, win.start_row, win.start_col)
+    print(char)
+    print(i, junk)
+  finally:
+    close()
