@@ -88,7 +88,8 @@ if __name__ == "__main__":
           break
         else:
             interface.text_screen("Enjoy the video!", False)
-            play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa")
+            play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa",\
+                                                   "-fs")
             entries.change_episode(entry_index,1)
             try:
               answ = yes_or_no(600) #wait up to 60 seconds for an answer
