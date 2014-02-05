@@ -36,4 +36,5 @@ def play_video(video_path, player="mplayer", *opt,
   
 if __name__ == "__main__":
   play_video("play_episode.data", player="cat", suppress_output=False)
-  play_video("it", "echo", "Does", subtitle="?", sub_op = "work", suppress_output=False)
+  play_video("it", "echo", "Does", subtitle="?", sub_op = "work",
+              suppress_output=False)
