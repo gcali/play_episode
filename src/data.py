@@ -63,6 +63,13 @@ class Data(list):
           f.write("{}|".format(elem[key]))
         f.write("\n")
 
+  def add_entry(self, name, season, episode):
+    self.append({"name":name, "season":season, "episode":episode,\
+                 "path":os.path.abspath(os.curdir)})
+    comp_fun = lambda x: x["name"].lower()
+    self.sort(key=comp_fun)
+    
+
   def change_path(self, new_path):
     """Changes the current default path
     """
@@ -116,6 +123,7 @@ def _assure_dir(directory):
 if __name__ == "__main__":
   data = Data()
   data.get_data() 
+  data.add_entry("test", 1, 1)
   for list in data:
     print(list)
   data.change_episode(0, 1)
