@@ -46,8 +46,8 @@ class Window:
 
     Args:
       dim_row: The number of lines of the window.
-      dim_col: Optional. The number of columns of the window. Default value: the entire
-               screen.
+      dim_col: Optional. The number of columns of the window. Default value:
+               the entire screen.
       start_row: Optional. The vertical offset of the window. 
       start_col: Optional. The horizontal offset of the window.
     """
@@ -69,10 +69,12 @@ class Window:
     refresh().
 
     Args:
-      [y,x]: Optional. The first two arguments are optional, and stand respectively
-             for the vertical and horizontal offset chosen for the string.
+      [y,x]: Optional. The first two arguments are optional, and stand
+             respectively for the vertical and horizontal offset chosen
+             for the string.
       string: The string to be printed.
-      [attr]: Optional. Another optional argument, the attribute to be passed. Different
+      [attr]: Optional. Another optional argument, the attribute to be
+              passed. Different
               attributes can be ORed. Not comprehensive possible values:
               A_REVERSE: Highlight the string
               A_BOLD: The string is printed in bold character
@@ -93,7 +95,7 @@ class Window:
     """Gets a char from the input.
 
     Returns a string representing the first character in the input queue.
-    Special characters are spelled out (e.g. "KEY_BACKSPACE", "KEY_ENTER").  
+    Special characters are spelled out (e.g. "KEY_BACKSPACE", "KEY_ENTER"). 
 
     Args:
       Currently not to be used.
@@ -123,8 +125,8 @@ class Window:
                          diff_row = 0, start_col = 0):
     """Creates a new window under the current one.
 
-    Creates a new window of "dim_row" lines under the current one, with optional
-    offsets and width.
+    Creates a new window of "dim_row" lines under the current one, with
+    optional offsets and width.
 
     Args:
       dim_row: The number of lines of the new window.
@@ -199,21 +201,23 @@ def text_screen(text, wait_for_key = True):
 def choice_screen(title, *choices, high=-1, start_row = 0, start_col = 0):
   """Creates a new window to choose from a number of alternatives.
 
-  Creates a new window object with a line for a title and the arguments in "choices"
-  as possible choices. Highlights a line if it's specified. The window needs not
-  to be refreshed to display the screen.
+  Creates a new window object with a line for a title and the arguments in
+  "choices" as possible choices. Highlights a line if it's specified.
+  The window needs not to be refreshed to display the screen.
 
   Args:
     title: The title of the screen.
     *choices: The lines to be printed as choices beneath the title.
-    high: Optional. The line to highlight. If it's out of range, no line is highlighted.
+    high: Optional. The line to highlight. If it's out of range, no line is
+          highlighted.
     start_row: Optional. The vertical offset of the new window.
     start_col: Optional. The horizontal offset of the new window.
 
   Returns:
     The new window.
   """
-  screen = Window(2 + len(choices) + 1, start_row = start_row, start_col = start_col)
+  screen = Window(2 + len(choices) + 1,\
+                  start_row = start_row, start_col = start_col)
   screen.print_str(title + "\n\n", curses.A_BOLD)
   pad = len(max(choices,key=len))
   for i,line in enumerate(choices):
