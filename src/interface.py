@@ -228,6 +228,27 @@ def choice_screen(title, *choices, high=-1, start_row = 0, start_col = 0):
   screen.refresh()
   return screen
 
+def get_delayed_char(time):
+    try:
+      c = get_char()
+    except curses.error:
+      if time < 255:
+        curses.cbreak()
+        clear_screen()
+        raise TimeError
+      else:
+        time -= 255
+        curses.halfdelay(get_delay(time))
+        c = None
+    return (c, time)
+  
+
+def get_delay(time):
+  if time > 255:
+    return 255
+  else:
+    return time % 256
+
 def get_choice(title, choices, get_input = False, time = -1, i = 0,\
                handlers = {}):
   """Makes the user choose between a number of choices.
@@ -273,23 +294,12 @@ def get_choice(title, choices, get_input = False, time = -1, i = 0,\
   else:
     max_i = n_lines-1
   min_i = 0
-  delay = lambda x: 255 if x > 255 else x % 256
   if time >= 0:
-    curses.halfdelay(delay(time))
+    curses.halfdelay(get_delay(time))
   while True:
     screen = choice_screen(title, *(choices + [new_input]), high=i)
-    try:
-      c = get_char()
-    except curses.error:
-      if time < 255:
-        curses.cbreak()
-        clear_screen()
-        raise TimeError
-      else:
-        time -= 255
-        curses.halfdelay(delay(time))
-        c = None
 
+    c, time = get_delayed_char(time)
     if c == None:
       pass
     elif c == "KEY_DOWN":
@@ -322,34 +332,31 @@ def get_choice(title, choices, get_input = False, time = -1, i = 0,\
 
 if __name__ == "__main__":
   start() 
+
+
+  win = Window(10,10)
+  win = win.create_under(2)
+
+  win.print_str("prova")
+  win.refresh()
+  char = get_char()
+
+  win.clear()
+  win.refresh()
+
+
+  title = "Prova"
+  f = lambda s,x,y: [s + str(i) for i in range(x,y+1)]
+  choices = f("Linea ", 0, 10)
   try:
+    i, key, junk = get_choice(title, choices, get_input = True, time = 20) 
+  except TimeError:
+    choices = f("Ok ", 0,5)
+    i, key, junk = get_choice(title, choices, get_input = True)
+  
 
+  close()
 
-    win = Window(10,10)
-    win = win.create_under(2)
-
-    win.print_str("prova")
-    win.refresh()
-    char = get_char()
-
-    win.clear()
-    win.refresh()
-
-
-    title = "Prova"
-    f = lambda s,x,y: [s + str(i) for i in range(x,y+1)]
-    choices = f("Linea ", 0, 10)
-    try:
-      i, key, junk = get_choice(title, choices, get_input = True, time = 20) 
-    except TimeError:
-      choices = f("Ok ", 0,5)
-      i, key, junk = get_choice(title, choices, get_input = True)
-    
-
-    close()
-
-    print(win.dim_row, win.dim_col, win.start_row, win.start_col)
-    print(char)
-    print(i, junk)
-  finally:
-    close()
+  print(win.dim_row, win.dim_col, win.start_row, win.start_col)
+  print(char)
+  print(i, junk)
