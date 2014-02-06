@@ -307,7 +307,7 @@ def get_choice(title, choices, get_input = False, time = -1, i = 0,\
     elif c == "KEY_UP":
       i = max(i-1,min_i)
     elif get_input and i == max_i:
-      if c.isalpha():
+      if c.isalnum() or c == ' ':
         new_input += c
       elif c == "KEY_BACKSPACE":
         new_input = new_input[:-1]

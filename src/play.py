@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 
-import os
-import subprocess
+import os, subprocess
 
 def play_video(video_path, player="mplayer", *opt,
                subtitle = None, sub_op = "-sub",
