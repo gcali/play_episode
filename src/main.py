@@ -29,8 +29,8 @@ def choose_episode(entries):
   handle_right = lambda x,y: handle_arrow_keys(entries, y, +1, x)
   handlers = {"KEY_LEFT" : handle_left, "KEY_RIGHT" : handle_right}
   while True:
-    (index,key) = interface.get_choice(title, choices,
-                                       i=index, handlers=handlers)
+    (index,key,new_input) = interface.get_choice(title, choices, True,
+                                                 i=index, handlers=handlers)
     if key == "\n" or key == "KEY_ENTER":
       break
     elif key == "KEY_LEFT" and index != -1:
@@ -44,7 +44,7 @@ def choose_episode(entries):
     elif key == "KEY_F(2)":
       raise ChooseAction("save") 
 
-  return index
+  return (index,new_input)
 
 def yes_or_no(wait_time):
   choices = ["Yes", "No"]
@@ -71,13 +71,18 @@ if __name__ == "__main__":
     interface.start()
     while True:
       try:
-        entry_index=choose_episode(entries)
+        (entry_index,new_input)=choose_episode(entries)
       except ChooseAction as e:
         if e.action == "save":
           entries.save_data()
           break
         elif e.action == "quit":
           break
+
+      if entry_index == len(entries):
+        (season,episode) = interface.get_season_episode()
+        entries.add_entry(new_input, season, episode)
+        continue
 
       while True:
         try:

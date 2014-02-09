@@ -64,6 +64,9 @@ class Data(list):
         f.write("\n")
 
   def add_entry(self, name, season, episode):
+    conv_str = lambda x: str(x) if x >= 10 else "0" + str(x)
+    season = conv_str(season)
+    episode = conv_str(episode)
     self.append({"name":name, "season":season, "episode":episode,\
                  "path":os.path.abspath(os.curdir)})
     comp_fun = lambda x: x["name"].lower()
