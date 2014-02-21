@@ -100,6 +100,8 @@ if __name__ == "__main__":
               answ = yes_or_no(600) #wait up to 60 seconds for an answer
             except interface.TimeError:
               sys.exit(2)
+            entries.save_data() #if an answer was given, save the current
+                                #data
             if not answ:
               break
   finally:
