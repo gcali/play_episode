@@ -71,6 +71,9 @@ class Data(list):
                  "path":os.path.abspath(os.curdir)})
     comp_fun = lambda x: x["name"].lower()
     self.sort(key=comp_fun)
+
+  def delete_entry(self, index):
+    del(self[index])
     
 
   def change_path(self, new_path):

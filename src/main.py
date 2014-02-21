@@ -5,9 +5,10 @@ import interface, find, play
 import sys
 
 class ChooseAction(Exception):
-  def __init__(self, action, episode_name=None):
+  def __init__(self, action, episode_name=None, index=-1):
     self.action = action
     self.episode_name = episode_name
+    self.index = index
 
   def __str__(self):
     return repr(self.action)
@@ -43,6 +44,8 @@ def choose_episode(entries):
       raise ChooseAction("quit")
     elif key == "KEY_F(2)":
       raise ChooseAction("save") 
+    elif key == "d":
+      raise ChooseAction("delete", index=index)
 
   return (index,new_input)
 
@@ -78,6 +81,9 @@ if __name__ == "__main__":
           break
         elif e.action == "quit":
           break
+        elif e.action == "delete":
+          entries.delete_entry(e.index)
+          continue
 
       if entry_index == len(entries):
         (season,episode) = interface.get_season_episode()
