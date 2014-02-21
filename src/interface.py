@@ -4,7 +4,7 @@ import curses
 
 
 margin_up = 0
-margin_left = 1
+margin_left = 0
 
 class TimeError(Exception):
   """Exception to be used to mean an operation took too much time"""
