@@ -306,6 +306,10 @@ def get_choice(title, choices, get_input = False, time = -1, i = 0,\
       i = min(i+1,max_i)
     elif c == "KEY_UP":
       i = max(i-1,min_i)
+    elif c == "KEY_END":
+      i = max_i
+    elif c == "KEY_HOME":
+      i = min_i
     elif get_input and i == max_i:
       if c.isalnum() or c == ' ':
         new_input += c
