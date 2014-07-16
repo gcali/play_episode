@@ -34,12 +34,12 @@ def choose_episode(entries):
                                                  i=index, handlers=handlers)
     if key == "\n" or key == "KEY_ENTER":
       break
-    elif key == "KEY_LEFT" and index != -1:
-      entries.change_episode(index, -1)
-      choices[index] = name_from_entry(entries[index])
-    elif key == "KEY_RIGHT" and index != -1:
-      entries.change_episode(index, +1)
-      choices[index] = name_from_entry(entries[index])
+    #elif key == "KEY_LEFT" and index != -1:
+    #  entries.change_episode(index, -1)
+    #  choices[index] = name_from_entry(entries[index])
+    #elif key == "KEY_RIGHT" and index != -1:
+    #  entries.change_episode(index, +1)
+    #  choices[index] = name_from_entry(entries[index])
     elif key == "q" or key == "KEY_F(3)":
       raise ChooseAction("quit")
     elif key == "KEY_F(2)":
