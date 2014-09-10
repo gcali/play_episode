@@ -4,6 +4,8 @@ import os
 import re
 import data
 
+import sys
+
 set_extensions = set(("mkv","avi","mp4"))
 
 class _FoundError(Exception):
@@ -14,7 +16,7 @@ class NotFoundError(Exception):
 
 def gen_expr(season,episode,extension):
   """Generates the regular expression for the file"""
-  return r".*0*{0}[xXeE]0*{1}.*\.{2}$".format(int(season),
+  return r".*0*{0}[xXeE]0*{1}[^0-9]+.*\.{2}$".format(int(season),
                                               int(episode),
                                               extension)
 
@@ -60,6 +62,8 @@ def find_file(entry, find_subs = False):
       raise NotFoundError
   except _FoundError:
     if not find_subs:
+      #with open("play.log", "a") as f:
+        #print(name, file=f)
       return name
 
   expr = gen_expr(entry["season"], entry["episode"], "srt")
