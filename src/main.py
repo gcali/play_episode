@@ -50,21 +50,23 @@ def choose_episode(entries):
   return (index,new_input)
 
 def yes_or_no(wait_time):
-  choices = ["Yes", "No"]
+  choices = ["Yes", "No", "Repeat"]
   title = "Do you want to watch another episode?"
   index = 0
   while True:
     (index,key) = interface.get_choice(title, choices,\
                                        i=index, time=wait_time)
     if key == "y" or key == "Y":
-      return True
+      return "Yes"
     elif key == "n" or key == "N":
-      return False
+      return "No"
     elif key == "KEY_ENTER" or key == "\n":
       if index == 0:
-        return True
-      else:
-        return False
+        return "Yes"
+      elif index == 1:
+        return "No"
+      elif index == 2:
+        return "Repeat"
 
 if __name__ == "__main__":
   key = ""
@@ -98,17 +100,25 @@ if __name__ == "__main__":
           interface.text_screen("File not found", True)
           break
         else:
-            interface.text_screen("Enjoy the video!", False)
+            text = ["Enjoy the video!",\
+                    "({} - {}x{})".format(episode["name"],
+                                                 episode["season"],
+                                                 episode["episode"])]
+            text=" ".join(text)
+            interface.text_screen(text, False)
+            #interface.text_screen("Enjoy the video!", False)
             play.play_video(video_path, "mplayer", "-zoom", "-ao", "alsa",\
-                                                   "-fs")
+                                                   "-fs", "-slave")
             entries.change_episode(entry_index,1)
             try:
               answ = yes_or_no(600) #wait up to 60 seconds for an answer
             except interface.TimeError:
               sys.exit(2)
+            if answ == "Repeat":
+                entries.change_episode(entry_index,-1)
             entries.save_data() #if an answer was given, save the current
                                 #data
-            if not answ:
-              break
+            if answ == "No":
+                break
   finally:
     interface.close()
